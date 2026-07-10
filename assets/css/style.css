@@ -1,0 +1,2122 @@
+/* ============================================================
+   True Trust 公式サイト 共通スタイル
+   設計図: site/BLUEPRINT.md §1(デザイン) / §3(共通コンポーネント)
+   方向: 白磁 × 墨茶 × 金 — ライト基調の和モダン・ラグジュアリー
+   規約: 後続ページはこのファイルを編集禁止(site/CONVENTIONS.md 参照)
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   0. デザイントークン(BLUEPRINT §1-2 の実値そのまま)
+   ------------------------------------------------------------ */
+:root {
+  /* 色 — True Trust実ブランド色(#3f2817実測)を軸に設計 */
+  --color-ink:        #2b1d10;
+  --color-brand:      #3f2817;
+  --color-brand-soft: #6d401e;
+  --color-gold:       #a8874f;
+  --color-bg:         #faf8f4;
+  --color-bg-alt:     #f3efe8;
+  --color-bg-deep:    #241a10;
+  --color-line:       #e5ddd0;
+  --color-error:      #c7031a;
+
+  /* タイポグラフィ */
+  --font-serif: "Shippori Mincho B1", "Hiragino Mincho ProN", serif;
+  --font-sans:  "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif;
+  --font-en:    "Cormorant Garamond", "Shippori Mincho B1", serif;
+
+  --text-hero: clamp(2.2rem, 1rem + 5.5vw, 5rem);
+  --text-h2:   clamp(1.5rem, 1.1rem + 1.8vw, 2.5rem);
+  --text-h3:   clamp(1.15rem, 1rem + 0.7vw, 1.5rem);
+  --text-base: clamp(0.95rem, 0.9rem + 0.3vw, 1.0625rem);
+  --text-small: 0.8125rem;
+  --leading-copy: 2.1;
+  --tracking-copy: 0.12em;
+
+  --space-section: clamp(4.5rem, 3rem + 6vw, 10rem);
+  --duration: 0.9s;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --header-h: 88px;
+  --cta-bar-h: 56px;
+  --container: 1200px;
+  --container-narrow: 860px;
+  --radius: 2px;
+}
+
+@media (max-width: 767px) {
+  :root { --header-h: 64px; }
+}
+
+/* ------------------------------------------------------------
+   1. リセット・ベース
+   ------------------------------------------------------------ */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header-h) + 16px);
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: 1.95;
+  letter-spacing: 0.04em;
+  font-feature-settings: "palt";
+  -webkit-font-smoothing: antialiased;
+  padding-top: var(--header-h);
+}
+
+h1, h2, h3, h4 { margin: 0; font-weight: 600; }
+p, ul, ol, dl, figure, table { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+img { display: block; max-width: 100%; height: auto; }
+a { color: inherit; text-decoration: none; }
+address { font-style: normal; }
+summary { cursor: pointer; }
+table { border-collapse: collapse; width: 100%; }
+
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 3px;
+}
+
+::selection { background: rgba(168, 135, 79, 0.25); }
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px;
+  margin: -1px; padding: 0; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+.skip-link {
+  position: absolute; top: -48px; left: 8px; z-index: 200;
+  background: var(--color-brand); color: #fff;
+  padding: 0.6em 1.2em; font-size: var(--text-small);
+  transition: top 0.2s;
+}
+.skip-link:focus { top: 8px; }
+
+/* ------------------------------------------------------------
+   2. タイポグラフィ・共通ユーティリティ
+   ------------------------------------------------------------ */
+.container {
+  width: min(100% - clamp(2.5rem, 8vw, 5rem), var(--container));
+  margin-inline: auto;
+}
+.container--narrow { max-width: var(--container-narrow); }
+
+.section { padding-block: var(--space-section); }
+.section--alt { background: var(--color-bg-alt); }
+.section--deep {
+  background: var(--color-bg-deep);
+  color: #f5f0e8;
+}
+
+/* 英字セクションラベル(Cormorant・大文字・字間広) */
+.section-label {
+  display: flex; align-items: center; gap: 1em;
+  font-family: var(--font-en);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  margin-bottom: 1.2rem;
+}
+.section-label::before {
+  content: "";
+  width: 2.5rem; height: 1px;
+  background: var(--color-gold);
+}
+
+.section-title {
+  font-family: var(--font-serif);
+  font-size: var(--text-h2);
+  line-height: 1.6;
+  letter-spacing: var(--tracking-copy);
+  color: var(--color-ink);
+  margin-bottom: clamp(1.8rem, 4vw, 3rem);
+}
+.section--deep .section-title { color: #f5f0e8; }
+
+.section-lead {
+  max-width: 40em;
+  line-height: var(--leading-copy);
+  margin-bottom: clamp(2rem, 5vw, 3.5rem);
+}
+
+.copy-serif {
+  font-family: var(--font-serif);
+  letter-spacing: var(--tracking-copy);
+  line-height: var(--leading-copy);
+}
+
+/* 改行制御(VISUAL_AUDIT2 H-1): 見出し・店名の泣き別れ防止。
+   word-break: auto-phrase = 文節単位の折返し(対応ブラウザのみ。非対応は従来挙動)。
+   text-wrap: balance = 1〜2文字の孤立行を抑制。
+   確実に割りたくない語句はHTML側で .nobr(inline-block)を併用 */
+h1, h2, h3,
+.hero__sub, .section-lead,
+.salon-card__name, .reserve-row__name, .bento__title,
+.recruit-banner__title, .reserve-block__note, .reserve-status__main,
+.store-footer__name, .site-footer__brand p, .voice__quote {
+  word-break: auto-phrase;
+}
+.section-title,
+.store-fv__h1,
+.recruit-banner__title { text-wrap: balance; }
+.nobr { display: inline-block; }
+
+.text-small { font-size: var(--text-small); letter-spacing: 0.05em; }
+.text-muted { color: rgba(43, 29, 16, 0.62); }
+.section--deep .text-muted { color: rgba(245, 240, 232, 0.62); }
+
+.note {
+  font-size: var(--text-small);
+  color: rgba(43, 29, 16, 0.62);
+  line-height: 1.9;
+}
+
+/* 金の下線が左から書かれるテキストリンク */
+.link-gold {
+  position: relative;
+  padding-bottom: 2px;
+  background-image: linear-gradient(var(--color-gold), var(--color-gold));
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-size: 0 1px;
+  transition: background-size 0.4s var(--ease);
+}
+.link-gold:hover,
+.link-gold:focus-visible { background-size: 100% 1px; }
+
+/* 矢印つき誘導リンク */
+.link-more {
+  display: inline-flex; align-items: center; gap: 0.6em;
+  font-family: var(--font-serif);
+  letter-spacing: 0.1em;
+}
+.link-more::after {
+  content: "";
+  width: 2.2em; height: 1px;
+  background: var(--color-ink);
+  transition: width 0.4s var(--ease), background-color 0.4s;
+}
+.link-more:hover::after,
+.link-more:focus-visible::after { width: 3.4em; background: var(--color-gold); }
+
+/* ------------------------------------------------------------
+   3. ボタン
+   ------------------------------------------------------------ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 0.5em;
+  min-height: 52px;
+  padding: 0.8em 2.4em;
+  font-family: var(--font-serif);
+  font-size: 0.9375rem;
+  letter-spacing: 0.14em;
+  line-height: 1.4;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.35s var(--ease),
+              color 0.35s var(--ease),
+              border-color 0.35s var(--ease),
+              box-shadow 0.35s var(--ease);
+}
+
+/* 主ボタン: 墨茶地に白。ホバーで金の縁が点灯(§3-1) */
+.btn--solid {
+  background: var(--color-brand);
+  color: #fff;
+}
+.btn--solid:hover,
+.btn--solid:focus-visible {
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 1px var(--color-gold);
+  background: var(--color-ink);
+}
+
+/* 罫線ボタン */
+.btn--line {
+  background: transparent;
+  color: var(--color-brand);
+  border-color: var(--color-brand);
+}
+.btn--line:hover,
+.btn--line:focus-visible {
+  border-color: var(--color-gold);
+  color: var(--color-brand-soft);
+  box-shadow: 0 0 0 1px var(--color-gold);
+}
+
+/* 濃幕セクション内の反転ボタン */
+.section--deep .btn--line {
+  color: #f5f0e8;
+  border-color: rgba(245, 240, 232, 0.6);
+}
+.section--deep .btn--line:hover,
+.section--deep .btn--line:focus-visible {
+  border-color: var(--color-gold);
+  color: #fff;
+}
+
+.btn--small { min-height: 42px; padding: 0.5em 1.6em; font-size: 0.875rem; }
+
+/* ------------------------------------------------------------
+   4. ヘッダー(§3-1)
+   ------------------------------------------------------------ */
+.site-header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  height: var(--header-h);
+  background: rgba(250, 248, 244, 0.92);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--color-line);
+  transition: box-shadow 0.4s var(--ease);
+}
+.site-header.is-scrolled {
+  box-shadow: 0 1px 24px rgba(43, 29, 16, 0.07);
+}
+
+.site-header__inner {
+  height: 100%;
+  width: min(100% - 2.5rem, 1360px);
+  margin-inline: auto;
+  display: flex; align-items: center; gap: 1.5rem;
+}
+
+.site-header__logo { flex-shrink: 0; }
+.site-header__logo img { width: auto; height: 52px; }
+@media (max-width: 767px) {
+  .site-header__logo img { height: 40px; }
+}
+
+.site-header__nav { margin-left: auto; }
+.site-header__nav ul {
+  display: flex; align-items: center;
+  gap: clamp(0.9rem, 1.4vw, 1.6rem);
+}
+.site-header__nav a {
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  padding-bottom: 3px;
+  background-image: linear-gradient(var(--color-gold), var(--color-gold));
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-size: 0 1px;
+  transition: background-size 0.4s var(--ease);
+  white-space: nowrap;
+}
+.site-header__nav a:hover,
+.site-header__nav a:focus-visible { background-size: 100% 1px; }
+
+/* 採用リンク: 顧客動線と罫線で分離(P0-14) */
+.site-header__nav .nav-recruit {
+  border-left: 1px solid var(--color-line);
+  padding-left: clamp(0.9rem, 1.4vw, 1.6rem);
+}
+.site-header__nav .nav-recruit a {
+  font-family: var(--font-en);
+  letter-spacing: 0.2em;
+  color: rgba(43, 29, 16, 0.6);
+}
+
+.site-header__cta { flex-shrink: 0; }
+.site-header__cta .btn { min-height: 44px; padding: 0.4em 1.6em; }
+
+@media (max-width: 1023px) {
+  .site-header__nav, .site-header__cta { display: none; }
+}
+
+/* ハンバーガー(SP) */
+.menu-toggle {
+  display: none;
+  margin-left: auto;
+  width: 48px; height: 48px;
+  background: none; border: 0; cursor: pointer;
+  position: relative;
+  z-index: 120;
+}
+.menu-toggle span {
+  position: absolute; left: 12px;
+  width: 24px; height: 1px;
+  background: var(--color-ink);
+  transition: transform 0.4s var(--ease), opacity 0.3s;
+}
+.menu-toggle span:nth-child(1) { top: 19px; }
+.menu-toggle span:nth-child(2) { top: 24px; }
+.menu-toggle span:nth-child(3) { top: 29px; }
+.menu-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(5px) rotate(24deg); }
+.menu-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+.menu-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-5px) rotate(-24deg); }
+@media (max-width: 1023px) {
+  .menu-toggle { display: block; }
+}
+
+/* SP全画面メニュー(白磁地・明朝) */
+.sp-menu {
+  position: fixed; inset: 0; z-index: 110;
+  background: var(--color-bg);
+  padding: calc(var(--header-h) + 1.5rem) 2rem 3rem;
+  overflow-y: auto;
+  opacity: 0; visibility: hidden;
+  transition: opacity 0.45s var(--ease), visibility 0.45s;
+}
+.sp-menu.is-open { opacity: 1; visibility: visible; }
+
+.sp-menu__nav a {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  letter-spacing: var(--tracking-copy);
+  padding: 0.7em 0;
+  border-bottom: 1px solid var(--color-line);
+}
+.sp-menu__section {
+  margin-top: 2rem;
+  font-family: var(--font-en);
+  font-size: 0.8125rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+}
+.sp-menu__salons li {
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid var(--color-line);
+}
+.sp-menu__salons .sp-menu__salon-link {
+  flex: 1;
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  padding: 0.8em 0;
+}
+.sp-menu__salons .sp-menu__salon-link small {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  color: rgba(43, 29, 16, 0.55);
+  letter-spacing: 0.06em;
+}
+.sp-menu__salons .sp-menu__tel {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius);
+  padding: 0.5em 0.9em;
+  color: var(--color-brand-soft);
+}
+.sp-menu__cta { margin-top: 2.5rem; }
+.sp-menu__cta .btn { width: 100%; }
+
+/* ------------------------------------------------------------
+   4b. 店舗ページ専用ミニヘッダー(REVISION_SPEC §C-1)
+   構成: 左=ロゴ+店名 / 右=telリンク+「ご予約」(→#reserve)。
+   グローバルナビ・ハンバーガーは置かない(店舗ページ=完結型ミニHP)
+   ------------------------------------------------------------ */
+.site-header--store .site-header__inner { justify-content: space-between; }
+
+.store-header__brand {
+  display: flex; align-items: center; gap: 0.9rem;
+  min-width: 0;
+}
+.store-header__brand img { width: auto; height: 42px; flex-shrink: 0; }
+.store-header__name {
+  font-family: var(--font-serif);
+  font-size: clamp(0.9375rem, 0.85rem + 0.5vw, 1.1875rem);
+  letter-spacing: 0.1em;
+  line-height: 1.4;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.store-header__actions {
+  display: flex; align-items: center; gap: clamp(0.7rem, 1.5vw, 1.1rem);
+  flex-shrink: 0;
+  margin-left: auto;
+}
+.store-header__actions .btn { min-height: 44px; padding: 0.4em 1.5em; }
+
+.store-header__tel {
+  display: inline-flex; align-items: center; gap: 0.5em;
+  font-family: var(--font-serif);
+  font-size: 1.0625rem;
+  font-variant-numeric: oldstyle-nums;
+  letter-spacing: 0.04em;
+  color: var(--color-brand);
+  transition: color 0.3s;
+}
+.store-header__tel:hover,
+.store-header__tel:focus-visible { color: var(--color-brand-soft); }
+.store-header__tel svg { width: 17px; height: 17px; flex-shrink: 0; }
+
+@media (max-width: 767px) {
+  .store-header__brand img { height: 34px; }
+  /* SPはブランド冠(True Trust / hair design)を省略し、
+     「和戸店」など店名を必ず見せる(VISUAL_AUDIT2 M-3) */
+  .store-header__name .store-header__name-brand { display: none; }
+  /* SPは番号を隠しtelアイコンのみ(§C-1) */
+  .store-header__tel {
+    width: 44px; height: 44px;
+    justify-content: center;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius);
+  }
+  .store-header__tel .store-header__tel-number { display: none; }
+  .store-header__actions .btn { padding: 0.4em 1.1em; font-size: 0.875rem; }
+}
+
+/* ------------------------------------------------------------
+   5. フッター(§3-2 濃幕・白抜き)
+   ------------------------------------------------------------ */
+.site-footer {
+  background: var(--color-bg-deep);
+  color: #f5f0e8;
+  padding: clamp(3.5rem, 7vw, 6rem) 0 0;
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
+}
+.site-footer a { transition: color 0.3s; }
+.site-footer a:hover,
+.site-footer a:focus-visible { color: var(--color-gold); }
+
+.site-footer__grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1fr 1fr;
+  gap: clamp(2rem, 4vw, 4rem);
+  padding-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+@media (max-width: 1023px) {
+  .site-footer__grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 599px) {
+  .site-footer__grid { grid-template-columns: 1fr; }
+}
+
+/* フッターは白文字版ロゴ logo01-w.png を使う(透過・濃幕#241a10用。REVISION_SPEC §B-3) */
+.site-footer__brand img {
+  width: auto; height: 88px;
+  margin-bottom: 1.2rem;
+}
+.site-footer__brand p {
+  font-family: var(--font-serif);
+  letter-spacing: 0.1em;
+  line-height: 2;
+  color: rgba(245, 240, 232, 0.85);
+}
+
+.site-footer__heading {
+  font-family: var(--font-en);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  margin-bottom: 1.1rem;
+}
+
+.site-footer__list li { margin-bottom: 0.75em; line-height: 1.7; }
+.site-footer__list .footer-salon-city {
+  display: block;
+  font-size: 0.6875rem;
+  color: rgba(245, 240, 232, 0.55);
+}
+.site-footer__list .footer-salon-tel {
+  display: inline-block;
+  font-size: 0.8125rem;
+  color: rgba(245, 240, 232, 0.75);
+}
+
+.site-footer__bottom {
+  border-top: 1px solid rgba(245, 240, 232, 0.14);
+  padding: 1.4rem 0;
+  font-size: 0.75rem;
+  color: rgba(245, 240, 232, 0.6);
+  text-align: center;
+  letter-spacing: 0.08em;
+}
+
+/* ------------------------------------------------------------
+   5b. 店舗ページ専用ミニフッター(REVISION_SPEC §C-2)
+   店名/住所/TEL/営業時間+親サイトへの控えめな1リンクのみ。
+   最下段は .site-footer__bottom を流用可
+   ------------------------------------------------------------ */
+.store-footer {
+  background: var(--color-bg-deep);
+  color: rgba(245, 240, 232, 0.85);
+  padding: clamp(3rem, 6vw, 4.5rem) 0 0;
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+.store-footer__name {
+  font-family: var(--font-serif);
+  font-size: 1.1875rem;
+  letter-spacing: 0.14em;
+  color: #f5f0e8;
+  margin-bottom: 1rem;
+}
+.store-footer__facts { line-height: 2.2; color: rgba(245, 240, 232, 0.78); }
+.store-footer__facts a { color: inherit; transition: color 0.3s; }
+.store-footer__facts a:hover,
+.store-footer__facts a:focus-visible { color: var(--color-gold); }
+.store-footer__links {
+  margin-top: 1.8rem;
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: 0.8rem 2.2rem;
+  font-size: 0.8125rem;
+}
+.store-footer__links a { color: rgba(245, 240, 232, 0.66); transition: color 0.3s; }
+.store-footer__links a:hover,
+.store-footer__links a:focus-visible { color: var(--color-gold); }
+.store-footer .site-footer__bottom { margin-top: 2.2rem; }
+
+/* ------------------------------------------------------------
+   6. sticky予約バー(§3-3・SPのみ)
+   ------------------------------------------------------------ */
+.cta-bar {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 90;
+  height: var(--cta-bar-h);
+  display: none;
+  grid-template-columns: 1fr 1fr;
+  border-top: 1px solid var(--color-line);
+  transform: translateY(100%);
+  transition: transform 0.45s var(--ease);
+}
+.cta-bar.is-visible { transform: translateY(0); }
+.cta-bar a {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0.4em;
+  font-family: var(--font-serif);
+  font-size: 0.9375rem;
+  letter-spacing: 0.12em;
+}
+.cta-bar__web { background: var(--color-brand); color: #fff; }
+.cta-bar__tel {
+  background: var(--color-bg);
+  color: var(--color-brand);
+  border-left: 1px solid var(--color-line);
+}
+
+@media (max-width: 767px) {
+  .cta-bar { display: grid; }
+  /* 本文最下部にバー分の余白(§3-3: 72px) */
+  body:not([data-cta="off"]) .site-footer { padding-bottom: 72px; }
+}
+/* 予約ページ等では出さない */
+body[data-cta="off"] .cta-bar { display: none; }
+
+/* ------------------------------------------------------------
+   7. パンくず(§3-5)
+   ------------------------------------------------------------ */
+.breadcrumb {
+  padding-top: 1.4rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  color: rgba(43, 29, 16, 0.6);
+}
+.breadcrumb ol {
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: 0.6em;
+}
+.breadcrumb li { display: flex; align-items: center; gap: 0.6em; }
+.breadcrumb li + li::before {
+  content: "";
+  width: 0.9em; height: 1px;
+  background: var(--color-gold);
+  display: inline-block;
+}
+.breadcrumb a:hover, .breadcrumb a:focus-visible { color: var(--color-brand-soft); }
+.breadcrumb [aria-current="page"] { color: var(--color-ink); }
+
+/* ------------------------------------------------------------
+   8. 店舗カード(§3-4)
+   ------------------------------------------------------------ */
+.salon-card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius);
+  display: flex; flex-direction: column;
+}
+.section--alt .salon-card { background: var(--color-bg); }
+
+/* 店舗カード写真は 4:3 に統一(REVISION_SPEC §F-1) */
+.salon-card__photo {
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+}
+.salon-card__photo img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 1.1s var(--ease);
+}
+.salon-card:hover .salon-card__photo img { transform: scale(1.03); }
+
+.salon-card__body {
+  padding: clamp(1.3rem, 2.4vw, 1.8rem);
+  display: flex; flex-direction: column; gap: 0.9rem;
+  flex: 1;
+}
+
+.salon-card__name {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  letter-spacing: 0.1em;
+  line-height: 1.5;
+}
+.salon-card__name a {
+  background-image: linear-gradient(var(--color-gold), var(--color-gold));
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-size: 0 1px;
+  transition: background-size 0.4s var(--ease);
+  padding-bottom: 2px;
+}
+.salon-card:hover .salon-card__name a,
+.salon-card__name a:focus-visible { background-size: 100% 1px; }
+
+.salon-card__copy {
+  font-size: 0.875rem;
+  line-height: 1.9;
+  color: rgba(43, 29, 16, 0.8);
+}
+
+.salon-card__data {
+  font-size: 0.8125rem;
+  line-height: 1.9;
+  color: rgba(43, 29, 16, 0.66);
+  border-top: 1px solid var(--color-line);
+  padding-top: 0.9rem;
+}
+.salon-card__data div { display: flex; gap: 0.8em; }
+.salon-card__data dt {
+  flex-shrink: 0; width: 4.5em;
+  color: var(--color-gold);
+  font-family: var(--font-serif);
+  letter-spacing: 0.08em;
+}
+.salon-card__data dd { margin: 0; }
+
+/* 口コミ行(テキストのみ・JSON-LD禁止 §3-4) */
+.salon-card__review {
+  font-size: 0.8125rem;
+  color: rgba(43, 29, 16, 0.72);
+}
+.salon-card__review a { color: var(--color-brand-soft); }
+
+/* ボタンは「店舗ページへ」1本(HPB予約ボタン廃止 REVISION_SPEC §D-3) */
+.salon-card__actions {
+  margin-top: auto;
+  display: grid; gap: 0.6rem;
+}
+.salon-card__actions .btn { min-height: 46px; padding: 0.5em 0.8em; font-size: 0.8437rem; }
+
+.salon-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(1rem, 2vw, 1.8rem);
+}
+@media (max-width: 1023px) { .salon-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 599px)  { .salon-grid { grid-template-columns: 1fr; } }
+
+/* ------------------------------------------------------------
+   9. 口コミ表示(§3-6)
+   ------------------------------------------------------------ */
+.voice__list {
+  display: grid; gap: clamp(1.2rem, 2.5vw, 2rem);
+}
+.voice__item {
+  border-left: 2px solid var(--color-gold);
+  padding: 0.4em 0 0.4em 1.4em;
+}
+.voice__quote {
+  font-family: var(--font-serif);
+  font-size: 1.0625rem;
+  letter-spacing: 0.08em;
+  line-height: 2;
+}
+.voice__meta {
+  margin-top: 0.5em;
+  font-size: 0.75rem;
+  color: rgba(43, 29, 16, 0.6);
+}
+.voice__source {
+  margin-top: clamp(1.4rem, 3vw, 2rem);
+  font-size: var(--text-small);
+  color: rgba(43, 29, 16, 0.62);
+}
+.voice__score {
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  letter-spacing: 0.06em;
+}
+.voice__score strong {
+  font-size: 1.9em;
+  font-weight: 600;
+  color: var(--color-brand);
+  font-variant-numeric: oldstyle-nums;
+}
+
+/* ------------------------------------------------------------
+   10. 料金表(§3-7)
+   ------------------------------------------------------------ */
+.price-table-wrap { overflow-x: auto; }
+.price-table {
+  min-width: 480px;
+  font-size: 0.9375rem;
+}
+.price-table caption {
+  text-align: left;
+  font-family: var(--font-serif);
+  font-size: var(--text-h3);
+  letter-spacing: 0.1em;
+  padding-bottom: 0.9em;
+}
+.price-table th, .price-table td {
+  text-align: left;
+  padding: 0.9em 1em;
+  border-bottom: 1px solid var(--color-line);
+  line-height: 1.7;
+  vertical-align: top;
+}
+.price-table thead th {
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  font-weight: 500;
+  color: var(--color-gold);
+  font-family: var(--font-serif);
+  border-bottom-color: var(--color-gold);
+}
+.price-table .price {
+  text-align: right;
+  white-space: nowrap;
+  font-family: var(--font-serif);
+  font-variant-numeric: oldstyle-nums;
+  letter-spacing: 0.04em;
+}
+.price-table__notes {
+  margin-top: 1.2rem;
+  font-size: var(--text-small);
+  color: rgba(43, 29, 16, 0.62);
+  line-height: 2;
+}
+.price-table__notes li { padding-left: 1.2em; text-indent: -1.2em; }
+.price-table__notes li::before { content: "※ "; color: var(--color-gold); }
+
+/* ------------------------------------------------------------
+   11. FAQ(§3-8 details ネイティブ)
+   ------------------------------------------------------------ */
+.faq__list { border-top: 1px solid var(--color-line); }
+.faq__item { border-bottom: 1px solid var(--color-line); }
+.faq__item summary {
+  list-style: none;
+  display: flex; align-items: baseline; gap: 1em;
+  padding: 1.3em 2.4em 1.3em 0.2em;
+  font-family: var(--font-serif);
+  font-size: 1.0313rem;
+  letter-spacing: 0.08em;
+  line-height: 1.8;
+  position: relative;
+  transition: color 0.3s;
+}
+.faq__item summary::-webkit-details-marker { display: none; }
+.faq__item summary:hover { color: var(--color-brand-soft); }
+.faq__item summary::before {
+  content: "Q";
+  font-family: var(--font-en);
+  color: var(--color-gold);
+  font-size: 1.1em;
+  flex-shrink: 0;
+}
+.faq__item summary::after {
+  content: "";
+  position: absolute; right: 0.4em; top: 50%;
+  width: 12px; height: 12px;
+  border-right: 1px solid var(--color-gold);
+  border-bottom: 1px solid var(--color-gold);
+  transform: translateY(-70%) rotate(45deg);
+  transition: transform 0.35s var(--ease);
+}
+.faq__item[open] summary::after { transform: translateY(-30%) rotate(-135deg); }
+.faq__answer {
+  padding: 0 0.2em 1.5em 2.1em;
+  font-size: 0.9375rem;
+  line-height: 2;
+  color: rgba(43, 29, 16, 0.85);
+}
+
+/* ------------------------------------------------------------
+   12. 初めての方へ(§3-9)
+   ------------------------------------------------------------ */
+.first-guide__steps {
+  counter-reset: step;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(1rem, 2vw, 1.8rem);
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+@media (max-width: 1023px) { .first-guide__steps { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 599px)  { .first-guide__steps { grid-template-columns: 1fr; } }
+
+.first-guide__step {
+  counter-increment: step;
+  border-top: 1px solid var(--color-line);
+  padding-top: 1.1rem;
+  position: relative;
+}
+.first-guide__step::before {
+  content: "0" counter(step);
+  font-family: var(--font-en);
+  font-size: 1.75rem;
+  color: var(--color-gold);
+  letter-spacing: 0.06em;
+  line-height: 1;
+  display: block;
+  margin-bottom: 0.6rem;
+}
+.first-guide__step h3 {
+  font-family: var(--font-serif);
+  font-size: 1.0625rem;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+}
+.first-guide__step p { font-size: 0.875rem; line-height: 1.9; color: rgba(43, 29, 16, 0.78); }
+
+/* 実用情報(駐車場をアクセスより上に: P0-12) */
+.first-guide__facts { display: grid; gap: 0; border-top: 1px solid var(--color-line); }
+.first-guide__facts > div {
+  display: flex; gap: 1.5em;
+  padding: 1em 0.2em;
+  border-bottom: 1px solid var(--color-line);
+  font-size: 0.9375rem;
+  line-height: 1.9;
+}
+.first-guide__facts dt {
+  flex-shrink: 0; width: 7em;
+  font-family: var(--font-serif);
+  letter-spacing: 0.08em;
+  color: var(--color-brand-soft);
+}
+.first-guide__facts dd { margin: 0; }
+@media (max-width: 599px) {
+  .first-guide__facts > div { flex-direction: column; gap: 0.2em; }
+  .first-guide__facts dt { width: auto; }
+}
+
+/* ------------------------------------------------------------
+   13. 特徴タグ(店舗ページ §5-0-3)
+   ------------------------------------------------------------ */
+.feature-tags {
+  display: flex; flex-wrap: wrap;
+  gap: 0.7rem;
+}
+.feature-tags li {
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  padding: 0.45em 1.1em;
+  font-size: 0.8125rem;
+  letter-spacing: 0.06em;
+  color: rgba(43, 29, 16, 0.82);
+}
+.feature-tags li::before {
+  content: "";
+  display: inline-block;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--color-gold);
+  margin-right: 0.7em;
+  vertical-align: 2px;
+}
+
+/* ------------------------------------------------------------
+   14. スタッフカード(顔写真なし構成 §5-0-5)
+   ------------------------------------------------------------ */
+.staff-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(1rem, 2vw, 1.6rem);
+}
+@media (max-width: 1023px) { .staff-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 599px)  { .staff-grid { grid-template-columns: 1fr; } }
+
+.staff-card {
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius);
+  padding: 1.5rem 1.4rem 1.3rem;
+  background: var(--color-bg);
+  position: relative;
+}
+.staff-card::before {
+  content: "";
+  position: absolute; top: 0; left: 1.4rem;
+  width: 2.2rem; height: 2px;
+  background: var(--color-gold);
+}
+.staff-card__name {
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  letter-spacing: 0.12em;
+  margin-bottom: 0.3rem;
+}
+.staff-card__role {
+  font-size: 0.75rem;
+  color: var(--color-gold);
+  letter-spacing: 0.1em;
+  margin-bottom: 0.7rem;
+}
+.staff-card__desc { font-size: 0.875rem; line-height: 1.9; color: rgba(43, 29, 16, 0.78); }
+
+/* 写真版スタッフカード(1:1クロップ REVISION_SPEC §C-5) */
+.staff-card__photo {
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: var(--radius);
+  margin-bottom: 1.1rem;
+}
+.staff-card__photo img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+
+/* イニシャル型プレースホルダ(写真なしスタッフ用。画像は生成しない §C-5)
+   例: <div class="staff-ph" role="img" aria-label="写真は準備中です">
+         <span class="staff-ph__initial" aria-hidden="true">Y.N.</span>
+       </div> */
+.staff-ph {
+  aspect-ratio: 1 / 1;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 0.9em;
+  background:
+    linear-gradient(115deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 50%),
+    repeating-linear-gradient(0deg, rgba(168, 135, 79, 0.045) 0 1px, transparent 1px 7px),
+    var(--color-bg-alt);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius);
+  margin-bottom: 1.1rem;
+}
+.staff-ph__initial {
+  width: 50%; aspect-ratio: 1 / 1;
+  border: 1px solid var(--color-gold);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-en);
+  font-size: clamp(1.3rem, 1rem + 1.4vw, 1.75rem);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-indent: 0.14em;
+  color: var(--color-gold);
+  /* 二重円で「意匠」として成立させる(VISUAL_AUDIT2 M-2) */
+  box-shadow: 0 0 0 6px var(--color-bg-alt), 0 0 0 7px rgba(168, 135, 79, 0.35);
+}
+.staff-ph__note {
+  font-family: var(--font-serif);
+  font-size: 0.6875rem;
+  letter-spacing: 0.22em;
+  text-indent: 0.22em;
+  color: rgba(63, 40, 23, 0.5);
+}
+
+/* ------------------------------------------------------------
+   15. 画像プレースホルダ(要撮影素材の代替。捏造画像は使わない)
+   ------------------------------------------------------------ */
+.ph {
+  display: flex; align-items: center; justify-content: center;
+  background:
+    linear-gradient(115deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 45%),
+    repeating-linear-gradient(0deg, rgba(168, 135, 79, 0.05) 0 1px, transparent 1px 7px),
+    repeating-linear-gradient(90deg, rgba(63, 40, 23, 0.03) 0 1px, transparent 1px 9px),
+    var(--color-bg-alt);
+  border: 1px solid var(--color-line);
+}
+.ph span {
+  font-family: var(--font-serif);
+  font-size: 0.8125rem;
+  letter-spacing: 0.3em;
+  color: rgba(63, 40, 23, 0.45);
+  writing-mode: vertical-rl;
+  padding: 1em 0;
+}
+.ph--h span { writing-mode: horizontal-tb; }
+
+/* ------------------------------------------------------------
+   15b. 画像の統一アスペクト比ユーティリティ(REVISION_SPEC §F-1)
+   店舗カード/コンセプト/施術/設備=4:3、店舗ページヒーロー=16:9、
+   スタイル写真=3:4、スタッフ=1:1。figure に付けて中のimgをcover
+   ------------------------------------------------------------ */
+.ratio-4x3, .ratio-16x9, .ratio-3x4, .ratio-1x1 {
+  overflow: hidden;
+  border-radius: var(--radius);
+}
+.ratio-4x3  { aspect-ratio: 4 / 3; }
+.ratio-16x9 { aspect-ratio: 16 / 9; }
+.ratio-3x4  { aspect-ratio: 3 / 4; }
+.ratio-1x1  { aspect-ratio: 1 / 1; }
+.ratio-4x3 > img, .ratio-16x9 > img, .ratio-3x4 > img, .ratio-1x1 > img,
+.ratio-4x3 > .ph, .ratio-16x9 > .ph, .ratio-3x4 > .ph, .ratio-1x1 > .ph {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+
+/* ------------------------------------------------------------
+   16. リビール(IO + CSS transition のみ。GSAP禁止 §2-3)
+   ------------------------------------------------------------ */
+.reveal {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity var(--duration) var(--ease),
+              transform var(--duration) var(--ease);
+  transition-delay: var(--reveal-delay, 0s);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* 写真: clip-path が下から開く
+   注: clip-pathは観測対象(.reveal-img)自身でなく子に掛ける。
+   自身に inset(100%) を掛けると IntersectionObserver の交差矩形が
+   空になり is-visible が永久に付かない(Chrome実測) */
+.reveal-img > * {
+  clip-path: inset(100% 0 0 0);
+  transition: clip-path var(--duration) var(--ease);
+  transition-delay: var(--reveal-delay, 0s);
+}
+.reveal-img.is-visible > * { clip-path: inset(0 0 0 0); }
+
+/* 行単位の時間差(親に .reveal-lines、行に .line) */
+.reveal-lines .line {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.6em);
+  transition: opacity var(--duration) var(--ease),
+              transform var(--duration) var(--ease);
+}
+.reveal-lines.is-visible .line { opacity: 1; transform: none; }
+.reveal-lines.is-visible .line:nth-child(2) { transition-delay: 0.15s; }
+.reveal-lines.is-visible .line:nth-child(3) { transition-delay: 0.3s; }
+.reveal-lines.is-visible .line:nth-child(4) { transition-delay: 0.45s; }
+
+/* 1文字ずつ(ヒーロー縦書きキャッチ用。JSが .char に分割) */
+.reveal-chars .char {
+  opacity: 0;
+  transition: opacity 0.5s var(--ease);
+}
+.reveal-chars.is-visible .char { opacity: 1; }
+
+/* スタッガー用ディレイユーティリティ */
+.d-1 { --reveal-delay: 0.08s; }
+.d-2 { --reveal-delay: 0.16s; }
+.d-3 { --reveal-delay: 0.24s; }
+.d-4 { --reveal-delay: 0.32s; }
+.d-5 { --reveal-delay: 0.4s; }
+
+/* モバイルは時間差なし一括(§4-2 演出方針) */
+@media (max-width: 767px) {
+  .reveal, .reveal-img, .reveal-lines .line { transition-delay: 0s !important; }
+  .reveal-chars .char { transition-delay: 0s !important; }
+}
+
+/* reduced-motion: 全アニメーション停止(§2-3 必須) */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .reveal, .reveal-img, .reveal-img > *,
+  .reveal-lines .line, .reveal-chars .char {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+    transition: none !important;
+  }
+  .salon-card__photo img,
+  .bento__photo img { transition: none !important; }
+  .hero-media video { transition: none !important; }
+  .cta-bar { transition: none; }
+}
+
+/* ------------------------------------------------------------
+   17. TOP: ヒーロー(§4-2 第1幕|動画FV版 REVISION_SPEC §A)
+   構成: <picture>ポスター静止画(=LCP要素)の上に <video> を重ね、
+   load後にJSが<source>を注入して再生(reduced-motion / saveData /
+   video非対応 ではポスター静止画のまま)。
+   可読性: 墨色スクリム+白文字(#faf8f4)で担保(§A-3 実値)。
+   動画・ポスターには reveal 等のアニメーションを掛けない(CLS/LCP保護)
+   ------------------------------------------------------------ */
+.hero {
+  position: relative;
+  min-height: calc(100svh - var(--header-h));
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* 背景メディア(ポスター<picture>と<video>の重ね) */
+.hero-media { position: absolute; inset: 0; z-index: -2; }
+.hero-media img,
+.hero-media video {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+/* 動画は再生開始(is-playing)後にフェードイン。LCPはポスター静止画で確定 */
+.hero-media video { opacity: 0; transition: opacity 0.9s var(--ease); }
+.hero-media video.is-playing { opacity: 1; }
+
+/* 墨色スクリム(§A-3)+左下の文字域を radial で補強。
+   動画中の明るいシーン(看板・ガラス面)でも可読性が落ちないよう
+   上部にも薄い墨を回す(全面ベタにはしない) */
+.hero-scrim {
+  position: absolute; inset: 0; z-index: -1;
+  /* 常時の薄い全面オーバーレイ(VISUAL_AUDIT2 H-3):
+     動画の明るいフレーム(手元アップ・肌色)でも白文字が溶けないよう
+     一律 0.22 の墨を敷き、その上に従来の下部グラデを重ねる */
+  background:
+    radial-gradient(ellipse 75% 60% at 20% 95%, rgba(36, 26, 16, 0.6) 0%, rgba(36, 26, 16, 0) 68%),
+    linear-gradient(to top, rgba(36, 26, 16, 0.66) 0%, rgba(36, 26, 16, 0.3) 45%, rgba(36, 26, 16, 0.12) 78%, rgba(36, 26, 16, 0.06) 100%),
+    linear-gradient(rgba(36, 26, 16, 0.22), rgba(36, 26, 16, 0.22));
+}
+
+/* 白文字の輪郭補強(明るい映像フレーム対策・柔らかい墨のハロー) */
+.hero__catch, .hero__sub, .hero__h1, .hero__badges, .hero__cta .note {
+  text-shadow: 0 1px 2px rgba(36, 26, 16, 0.4), 0 2px 20px rgba(36, 26, 16, 0.38);
+}
+
+.hero__inner {
+  width: min(100% - clamp(2.5rem, 8vw, 5rem), var(--container));
+  margin-inline: auto;
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(1.8rem, 4vw, 3.5rem);
+  padding-block: clamp(3rem, 8vh, 5.5rem);
+}
+
+/* 縦書きキャッチ(明朝・白) */
+.hero__catch {
+  font-family: var(--font-serif);
+  font-size: var(--text-hero);
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  line-height: 1.5;
+  writing-mode: vertical-rl;
+  color: #faf8f4;
+  /* 「オモイを、」「カタチに。」の5文字×2行で組む */
+  max-height: 6.9em;
+}
+
+.hero__body { max-width: 30em; }
+.hero__sub {
+  font-family: var(--font-serif);
+  font-size: clamp(0.9375rem, 0.85rem + 0.4vw, 1.125rem);
+  letter-spacing: var(--tracking-copy);
+  line-height: 2.2;
+  color: #faf8f4;
+  margin-bottom: 0.9rem;
+}
+.hero__h1 {
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.24em;
+  color: rgba(250, 248, 244, 0.85);
+  margin-bottom: 1.8rem;
+}
+
+/* 信頼バッジ列(事実のみ §4-2。白+金罫) */
+.hero__badges {
+  display: flex; flex-wrap: wrap;
+  gap: 0.6rem 1.6rem;
+  margin-bottom: 2rem;
+  font-size: 0.8125rem;
+  letter-spacing: 0.06em;
+  color: rgba(250, 248, 244, 0.94);
+}
+.hero__badges li { display: flex; align-items: center; gap: 0.6em; }
+.hero__badges li::before {
+  content: "";
+  width: 0.9em; height: 1px;
+  background: var(--color-gold);
+}
+
+.hero__cta .note { margin-top: 0.8rem; color: rgba(250, 248, 244, 0.8); }
+/* 濃スクリム上では主ボタンを白磁反転に(墨茶ベタは沈むため) */
+.hero .btn--solid {
+  background: var(--color-bg);
+  color: var(--color-brand);
+}
+.hero .btn--solid:hover,
+.hero .btn--solid:focus-visible {
+  background: #fff;
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 1px var(--color-gold);
+}
+
+/* Scrollを促す縦線(金・明滅なし §4-2。右端に置く) */
+.hero__scroll {
+  position: absolute;
+  right: clamp(1.25rem, 4vw, 2.5rem); bottom: 0;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 0.8em;
+  font-family: var(--font-en);
+  font-size: 0.6875rem;
+  letter-spacing: 0.3em;
+  color: var(--color-gold);
+  writing-mode: vertical-rl;
+}
+.hero__scroll::after {
+  content: "";
+  width: 1px; height: 3.5rem;
+  background: var(--color-gold);
+}
+
+@media (max-width: 767px) {
+  /* SPは文字が画面の大半に掛かるためスクリムを広めに。
+     縦書きキャッチが上部の明るいフレームに掛かるため全面 0.26 を追加(H-3) */
+  .hero-scrim {
+    background:
+      radial-gradient(ellipse 130% 75% at 25% 80%, rgba(36, 26, 16, 0.5) 0%, rgba(36, 26, 16, 0) 75%),
+      linear-gradient(to top, rgba(36, 26, 16, 0.7) 0%, rgba(36, 26, 16, 0.44) 55%, rgba(36, 26, 16, 0.26) 100%),
+      linear-gradient(rgba(36, 26, 16, 0.26), rgba(36, 26, 16, 0.26));
+  }
+  .hero__inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.1rem;
+    padding-block: 2.2rem 2.6rem;
+  }
+  .hero__catch { font-size: clamp(1.9rem, 8.5vw, 2.6rem); max-height: 6.9em; }
+  .hero__h1 { margin-bottom: 1.2rem; }
+  .hero__badges { gap: 0.45rem 1.4rem; margin-bottom: 1.4rem; }
+  .hero__cta .btn { width: 100%; }
+  .hero__scroll { display: none; }
+}
+
+/* ------------------------------------------------------------
+   18. TOP: Concept エディトリアル3枚組(§4-2 第2幕)
+   ------------------------------------------------------------ */
+.concept__grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: clamp(1rem, 2vw, 2rem);
+  align-items: start;
+}
+.concept__text { grid-column: 1 / 6; padding-top: clamp(0, 2vw, 2rem); }
+.concept__text .section-lead { margin-bottom: 2rem; }
+.concept__photos {
+  grid-column: 6 / 13;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: clamp(0.8rem, 1.5vw, 1.4rem);
+}
+.concept__photo-main { grid-column: 1 / 6; }
+.concept__photo-sub1 { grid-column: 6 / 8; margin-top: 18%; }
+.concept__photo-sub2 { grid-column: 2 / 5; margin-top: -14%; }
+.concept__photos img { width: 100%; height: auto; border-radius: var(--radius); }
+
+@media (max-width: 1023px) {
+  .concept__grid { grid-template-columns: 1fr; }
+  .concept__text, .concept__photos { grid-column: auto; }
+}
+
+/* ------------------------------------------------------------
+   19. TOP: Menu ベントグリッド(§4-2 第4幕)
+   ------------------------------------------------------------ */
+.bento {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-auto-rows: minmax(200px, auto);
+  gap: clamp(0.9rem, 1.6vw, 1.5rem);
+}
+.bento__cell {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-line);
+  display: flex;
+  min-height: 240px;
+}
+.bento__cell--1 { grid-column: 1 / 8;  grid-row: 1 / 3; min-height: 380px; }
+.bento__cell--2 { grid-column: 8 / 13; grid-row: 1; }
+.bento__cell--3 { grid-column: 8 / 13; grid-row: 2; }
+.bento__cell--4 { grid-column: 1 / 13; grid-row: 3; min-height: 200px; }
+@media (max-width: 767px) {
+  .bento__cell--1, .bento__cell--2, .bento__cell--3, .bento__cell--4 {
+    grid-column: 1 / 13; grid-row: auto;
+  }
+  .bento__cell--1 { min-height: 300px; }
+}
+
+.bento__photo {
+  position: absolute; inset: 0;
+}
+.bento__photo img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 1.1s var(--ease);
+}
+.bento__cell:hover .bento__photo img { transform: scale(1.03); }
+/* 下部スクリムは明るい写真(ガラス壁・白床)でも白文字が読める濃度に(VISUAL_AUDIT2 H-2) */
+.bento__photo::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(36, 26, 16, 0.84) 0%, rgba(36, 26, 16, 0.46) 45%, rgba(36, 26, 16, 0.08) 100%);
+}
+.bento__body {
+  position: relative;
+  margin-top: auto;
+  padding: clamp(1.2rem, 2.4vw, 2rem);
+  color: #fff;
+  width: 100%;
+  /* 文字輪郭の補強(H-2): スクリムと併せどのタイルでも可読性を担保 */
+  text-shadow: 0 1px 2px rgba(36, 26, 16, 0.45), 0 2px 14px rgba(36, 26, 16, 0.35);
+}
+.bento__title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.15rem, 1rem + 0.8vw, 1.6rem);
+  letter-spacing: 0.14em;
+  margin-bottom: 0.4rem;
+  padding-bottom: 4px;
+  display: inline-block;
+  background-image: linear-gradient(var(--color-gold), var(--color-gold));
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-size: 0 1px;
+  transition: background-size 0.4s var(--ease);
+}
+.bento__cell:hover .bento__title { background-size: 100% 1px; }
+.bento__copy {
+  font-size: 0.8437rem;
+  line-height: 1.9;
+  color: rgba(255, 255, 255, 0.88);
+  max-width: 34em;
+}
+
+/* ------------------------------------------------------------
+   20. TOP: HOMME 単独幕(濃幕帯 §4-2 第5幕)
+   DIVA(脱毛)は事業整理により除去済み(REVISION_SPEC §E)。
+   左=写真 / 右=ブランド名+実文コピー の全幅1ブロック
+   ------------------------------------------------------------ */
+.homme-band {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: clamp(2rem, 4.5vw, 4.5rem);
+  align-items: center;
+}
+@media (max-width: 767px) { .homme-band { grid-template-columns: 1fr; } }
+.homme-band__visual {
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: var(--radius);
+}
+.homme-band__visual img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+.homme-band__body { display: flex; flex-direction: column; gap: 1.2rem; align-items: flex-start; }
+
+/* サブブランド表記(HOMME帯・/mens/ 等で使用) */
+.subbrand__item { display: flex; flex-direction: column; gap: 1.2rem; }
+.subbrand__visual {
+  aspect-ratio: 16 / 11;
+  overflow: hidden;
+  border-radius: var(--radius);
+}
+.subbrand__visual img, .subbrand__visual .ph {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+.subbrand__brand {
+  font-family: var(--font-en);
+  font-size: 1.5rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  color: var(--color-gold);
+}
+.subbrand__brand small {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  color: rgba(245, 240, 232, 0.6);
+  margin-top: 0.3em;
+}
+.subbrand__copy {
+  font-size: 0.9375rem;
+  line-height: 2.1;
+  color: rgba(245, 240, 232, 0.88);
+}
+
+/* ------------------------------------------------------------
+   21. TOP: Voice + 採用(§4-2 第6幕)/ 予約クロージング(第7幕)
+   ------------------------------------------------------------ */
+.voice-recruit {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: clamp(2.5rem, 5vw, 5rem);
+  align-items: start;
+}
+@media (max-width: 1023px) { .voice-recruit { grid-template-columns: 1fr; } }
+
+.recruit-banner {
+  border: 1px solid var(--color-line);
+  border-top: 2px solid var(--color-gold);
+  border-radius: var(--radius);
+  padding: clamp(1.8rem, 3vw, 2.6rem);
+  background: var(--color-bg);
+}
+.recruit-banner .section-label { margin-bottom: 0.9rem; }
+.recruit-banner__title {
+  font-family: var(--font-serif);
+  font-size: 1.375rem;
+  letter-spacing: 0.12em;
+  line-height: 1.8;
+  margin-bottom: 0.8rem;
+}
+.recruit-banner p { font-size: 0.875rem; color: rgba(43, 29, 16, 0.75); margin-bottom: 1.4rem; }
+
+/* 予約クロージング: 店舗別導線4行 */
+.reserve-rows { border-top: 1px solid var(--color-line); }
+.reserve-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1.4fr auto;
+  gap: 1rem 2rem;
+  align-items: center;
+  padding: 1.3rem 0.2rem;
+  border-bottom: 1px solid var(--color-line);
+}
+.reserve-row__name {
+  font-family: var(--font-serif);
+  font-size: 1.0625rem;
+  letter-spacing: 0.1em;
+}
+.reserve-row__name small {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  color: rgba(43, 29, 16, 0.55);
+  letter-spacing: 0.08em;
+}
+.reserve-row__tel { font-size: 0.9375rem; line-height: 1.8; }
+.reserve-row__tel a {
+  font-family: var(--font-serif);
+  font-size: 1.2em;
+  font-variant-numeric: oldstyle-nums;
+  letter-spacing: 0.06em;
+  color: var(--color-brand);
+}
+.reserve-row__tel a:hover, .reserve-row__tel a:focus-visible { color: var(--color-brand-soft); }
+.reserve-row__tel small { display: block; font-size: 0.6875rem; color: rgba(43, 29, 16, 0.55); }
+@media (max-width: 767px) {
+  .reserve-row { grid-template-columns: 1fr; gap: 0.6rem; }
+  .reserve-row .btn { justify-self: start; }
+}
+.reserve-note { margin-top: 1.2rem; }
+
+/* 地図(遅延iframe)。読み込み前は空枠に見えないよう
+   背景+プレースホルダ文言を敷く(VISUAL_AUDIT2 M-1)。
+   iframe読込後はマップ自体が上に描画されて自然に隠れる */
+.map-embed {
+  margin-top: clamp(2rem, 4vw, 3rem);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  position: relative;
+  background: var(--color-bg-alt);
+}
+.map-embed::before {
+  content: "Google マップを読み込んでいます…";
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-serif);
+  font-size: var(--text-small);
+  letter-spacing: 0.2em;
+  color: rgba(63, 40, 23, 0.45);
+}
+.map-embed iframe {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: clamp(300px, 45vw, 420px);
+  border: 0;
+}
+
+/* ------------------------------------------------------------
+   22. 店舗ページ: FV ほか(§5-0)
+   ------------------------------------------------------------ */
+.store-fv { padding-block: clamp(1.5rem, 3vw, 3rem) 0; }
+.store-fv__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(1.5rem, 4vw, 4rem);
+  align-items: end;
+}
+@media (max-width: 767px) {
+  .store-fv__grid { grid-template-columns: 1fr; }
+}
+
+.store-fv__name-en {
+  font-family: var(--font-en);
+  font-size: 0.875rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  margin-bottom: 1rem;
+}
+.store-fv__h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(1.6rem, 1.2rem + 2.4vw, 2.8rem);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  line-height: 1.7;
+  margin-bottom: 1.4rem;
+}
+.store-fv__h1 small {
+  display: block;
+  font-size: 0.5em;
+  letter-spacing: 0.18em;
+  color: rgba(43, 29, 16, 0.65);
+  margin-bottom: 0.6em;
+  font-weight: 400;
+}
+.store-fv__sub {
+  font-size: 0.9375rem;
+  line-height: 2;
+  color: rgba(43, 29, 16, 0.78);
+  margin-bottom: 1.8rem;
+}
+.store-fv__cta {
+  display: flex; flex-wrap: wrap; gap: 0.8rem;
+  margin-bottom: 1.5rem;
+}
+.store-fv__photo {
+  overflow: hidden;
+  border-radius: var(--radius);
+  aspect-ratio: 16 / 9; /* 店舗ページヒーローは16:9統一(REVISION_SPEC §F-1) */
+}
+.store-fv__photo img { width: 100%; height: 100%; object-fit: cover; }
+
+/* 営業時間・定休日の即視認バー */
+.store-databar {
+  margin-top: clamp(2rem, 4vw, 3rem);
+  border-block: 1px solid var(--color-line);
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  justify-content: space-between;
+  gap: 1rem 2rem;
+  padding: 1.1rem 0.2rem;
+  font-size: 0.875rem;
+}
+.store-databar div { display: flex; align-items: baseline; gap: 0.9em; line-height: 1.8; }
+.store-databar dt {
+  font-family: var(--font-serif);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  color: var(--color-gold);
+  flex-shrink: 0;
+}
+.store-databar dd { margin: 0; }
+@media (max-width: 1023px) { .store-databar { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 599px)  { .store-databar { grid-template-columns: 1fr; } }
+
+/* 店内ギャラリー */
+.store-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(0.8rem, 1.5vw, 1.4rem);
+}
+@media (max-width: 599px) { .store-gallery { grid-template-columns: 1fr 1fr; } }
+.store-gallery figure { overflow: hidden; border-radius: var(--radius); }
+.store-gallery img {
+  width: 100%; height: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+/* 5枚ギャラリー(和戸店): 3+2 の均一グリッドで右側の空きを作らない
+   (VISUAL_AUDIT2 H-4。アスペクトは共通の 4:3 cover を継承) */
+.store-gallery--5 { grid-template-columns: repeat(6, 1fr); }
+.store-gallery--5 figure { grid-column: span 2; }
+.store-gallery--5 figure:nth-child(4),
+.store-gallery--5 figure:nth-child(5) { grid-column: span 3; }
+@media (max-width: 599px) {
+  .store-gallery--5 { grid-template-columns: 1fr 1fr; }
+  /* :nth-child(4)を明示指定=上のspan 3(詳細度0,2,1)に勝つため。
+     figureだけ(0,1,1)だと4枚目がspan 3のまま暗黙列が生まれグリッドが崩れる */
+  .store-gallery--5 figure,
+  .store-gallery--5 figure:nth-child(4) { grid-column: auto; }
+  .store-gallery--5 figure:nth-child(5) { grid-column: 1 / -1; }
+}
+
+/* アクセス */
+.access__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(1.5rem, 3vw, 3rem);
+}
+@media (max-width: 767px) { .access__grid { grid-template-columns: 1fr; } }
+.access__facts { border-top: 1px solid var(--color-line); }
+.access__facts > div {
+  display: flex; gap: 1.5em;
+  padding: 1em 0.2em;
+  border-bottom: 1px solid var(--color-line);
+  font-size: 0.9375rem;
+  line-height: 1.9;
+}
+.access__facts dt {
+  flex-shrink: 0; width: 6em;
+  font-family: var(--font-serif);
+  letter-spacing: 0.1em;
+  color: var(--color-brand-soft);
+}
+.access__facts dd { margin: 0; }
+.access__grid .map-embed { margin-top: 0; }
+
+/* 予約導線 2ブロック(初めて/2回目以降 P0-2) */
+.reserve-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1.2rem, 2.5vw, 2rem);
+}
+@media (max-width: 767px) { .reserve-split { grid-template-columns: 1fr; } }
+.reserve-split__block {
+  border: 1px solid var(--color-line);
+  border-top: 2px solid var(--color-gold);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  padding: clamp(1.6rem, 3vw, 2.4rem);
+  display: flex; flex-direction: column; gap: 1rem;
+}
+.reserve-split__label {
+  font-family: var(--font-serif);
+  font-size: 1.1875rem;
+  letter-spacing: 0.12em;
+}
+.reserve-split__block p { font-size: 0.875rem; line-height: 2; color: rgba(43, 29, 16, 0.78); }
+.reserve-split__block .btn { margin-top: auto; }
+.reserve-split__tel {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  letter-spacing: 0.06em;
+  font-variant-numeric: oldstyle-nums;
+  color: var(--color-brand);
+}
+
+/* ------------------------------------------------------------
+   22b. 予約ブロック標準形(REVISION_SPEC §D-2)
+   店舗ページ #reserve / /reservation/ で共用。
+   オンライン予約=マネサロ接続まで「準備中+電話」構成。
+   HPBへの予約導線は置かない(厳守)
+   ------------------------------------------------------------ */
+.reserve-block {
+  border: 1px solid var(--color-line);
+  border-top: 2px solid var(--color-gold);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  padding: clamp(1.8rem, 3.5vw, 2.8rem);
+  display: flex; flex-direction: column; gap: 1.2rem;
+}
+.reserve-block__note {
+  font-family: var(--font-serif);
+  font-size: 1.0625rem;
+  letter-spacing: 0.08em;
+  line-height: 2;
+}
+.reserve-block__tel {
+  display: flex; flex-direction: column; align-items: center; gap: 0.15em;
+  border: 1px solid var(--color-brand);
+  border-radius: var(--radius);
+  padding: 0.9em 1.5em;
+  text-align: center;
+  transition: border-color 0.35s var(--ease), box-shadow 0.35s var(--ease);
+}
+.reserve-block__tel:hover,
+.reserve-block__tel:focus-visible {
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 1px var(--color-gold);
+}
+.reserve-block__tel-number {
+  font-family: var(--font-serif);
+  font-size: clamp(1.5rem, 1.2rem + 1.4vw, 2rem);
+  letter-spacing: 0.06em;
+  font-variant-numeric: oldstyle-nums;
+  color: var(--color-brand);
+  line-height: 1.4;
+}
+.reserve-block__tel-hours { font-size: 0.8125rem; color: rgba(43, 29, 16, 0.62); line-height: 1.8; }
+
+/* TOP第7幕などで使う「準備中」注記カード(白磁・上品に §D-2) */
+.reserve-status {
+  border: 1px solid var(--color-line);
+  border-top: 2px solid var(--color-gold);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  padding: clamp(1.3rem, 2.5vw, 1.9rem) clamp(1.4rem, 3vw, 2.2rem);
+  margin-bottom: clamp(1.8rem, 4vw, 2.6rem);
+}
+.reserve-status__main {
+  font-family: var(--font-serif);
+  font-size: 1.0313rem;
+  letter-spacing: 0.08em;
+  line-height: 2;
+}
+.reserve-status .note { margin-top: 0.4em; }
+
+/* 近隣店舗への回遊 */
+.nearby {
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius);
+  padding: clamp(1.4rem, 2.5vw, 2rem);
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: 1rem 2rem;
+  justify-content: space-between;
+  background: var(--color-bg);
+}
+.nearby__label { font-size: 0.75rem; letter-spacing: 0.14em; color: var(--color-gold); font-family: var(--font-serif); }
+.nearby__name { font-family: var(--font-serif); font-size: 1.0625rem; letter-spacing: 0.1em; }
+
+/* ------------------------------------------------------------
+   23. 細部・印字
+   ------------------------------------------------------------ */
+.divider-gold {
+  width: 3rem; height: 1px;
+  background: var(--color-gold);
+  border: 0;
+  margin: clamp(2rem, 4vw, 3rem) 0;
+}
+
+@media print {
+  .site-header, .cta-bar, .sp-menu, .hero__scroll { display: none !important; }
+  body { padding-top: 0; }
+}
+
+/* ============================================================
+   24. 店舗ページ格上げレイヤー(2026-07-03)
+   設計: site/STORE_PAGE_DESIGN.md §4 / 上位: REVISION_SPEC.md §C/§F
+   対象: salon/{wado,shimoishida,sudama,ryuo} のみで使うクラス群。
+   既存クラスは変更しない(追加のみ)。既存トークンのみ使用。
+   既存クラスへの上書き(.staff-card__photo / .staff-ph の 3:4 化)は
+   main[data-store] スコープに限定 — color/ 等の他ページは 1:1 のまま。
+   ============================================================ */
+
+/* ---------- 24-1. 店舗ヒーロー(全幅・縦書き店名) ---------- */
+.store-hero {
+  position: relative;
+  min-height: clamp(480px, 68svh, 720px);
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  isolation: isolate;
+}
+.store-hero__media { position: absolute; inset: 0; z-index: -2; }
+.store-hero__media img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+.store-hero__scrim {
+  position: absolute; inset: 0; z-index: -1;
+  background:
+    radial-gradient(ellipse 75% 60% at 22% 92%, rgba(36, 26, 16, 0.55) 0%, rgba(36, 26, 16, 0) 68%),
+    linear-gradient(to top, rgba(36, 26, 16, 0.62) 0%, rgba(36, 26, 16, 0.26) 46%, rgba(36, 26, 16, 0.1) 100%),
+    linear-gradient(rgba(36, 26, 16, 0.18), rgba(36, 26, 16, 0.18));
+}
+.store-hero__inner {
+  width: min(100% - clamp(2.5rem, 8vw, 5rem), var(--container));
+  margin-inline: auto;
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(1.6rem, 4vw, 3.2rem);
+  padding-block: clamp(2.6rem, 7vh, 4.5rem) clamp(4rem, 9vh, 6rem);
+  color: #faf8f4;
+  text-shadow: 0 1px 2px rgba(36, 26, 16, 0.4), 0 2px 20px rgba(36, 26, 16, 0.38);
+}
+.store-hero__catch {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 1rem + 4.5vw, 4.25rem);
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  line-height: 1.4;
+  writing-mode: vertical-rl;
+  max-height: 8em;
+}
+.store-hero__body { max-width: 32em; }
+.store-hero__name-en {
+  font-family: var(--font-en);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  text-shadow: none;
+  margin-bottom: 0.9rem;
+}
+.store-hero__h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(1.05rem, 0.95rem + 0.6vw, 1.375rem);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  line-height: 1.9;
+  text-wrap: balance;
+  margin-bottom: 0.7rem;
+}
+.store-hero__h1 small {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  color: rgba(250, 248, 244, 0.85);
+  margin-bottom: 0.5em;
+}
+.store-hero__sub {
+  font-size: 0.875rem;
+  letter-spacing: 0.06em;
+  line-height: 2;
+  color: rgba(250, 248, 244, 0.92);
+  margin-bottom: 1.6rem;
+}
+.store-hero__cta { display: flex; flex-wrap: wrap; gap: 0.8rem; }
+/* 濃スクリム上では主ボタンを白磁反転(TOPヒーローと同じ) */
+.store-hero .btn--solid { background: var(--color-bg); color: var(--color-brand); }
+.store-hero .btn--solid:hover,
+.store-hero .btn--solid:focus-visible {
+  background: #fff;
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 1px var(--color-gold);
+}
+.store-hero .btn--line { color: #faf8f4; border-color: rgba(250, 248, 244, 0.65); }
+.store-hero .btn--line:hover,
+.store-hero .btn--line:focus-visible { border-color: var(--color-gold); color: #fff; }
+
+@media (max-width: 767px) {
+  .store-hero { min-height: clamp(420px, 78svh, 640px); }
+  .store-hero__inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding-block: 2rem 3.6rem;
+  }
+  .store-hero__catch { font-size: clamp(1.7rem, 7.5vw, 2.3rem); }
+  .store-hero__cta .btn { width: 100%; }
+  .store-hero__scrim {
+    background:
+      radial-gradient(ellipse 130% 75% at 25% 82%, rgba(36, 26, 16, 0.5) 0%, rgba(36, 26, 16, 0) 75%),
+      linear-gradient(to top, rgba(36, 26, 16, 0.68) 0%, rgba(36, 26, 16, 0.4) 55%, rgba(36, 26, 16, 0.24) 100%),
+      linear-gradient(rgba(36, 26, 16, 0.24), rgba(36, 26, 16, 0.24));
+  }
+}
+
+/* ---------- 24-2. 即視認バー: ヒーローに重ねる白磁カード ---------- */
+.store-databar--float {
+  position: relative;
+  z-index: 2;
+  margin-top: clamp(-3.6rem, -5vw, -2.4rem);
+  background: var(--color-bg);
+  border: 1px solid var(--color-line);
+  border-top: 2px solid var(--color-gold);
+  border-radius: var(--radius);
+  box-shadow: 0 18px 50px rgba(43, 29, 16, 0.09);
+  padding: clamp(1.1rem, 2.4vw, 1.6rem) clamp(1.3rem, 3vw, 2.4rem);
+}
+
+/* ---------- 24-3. Story(エディトリアル2カラム・写真オーバーラップ) ---------- */
+.store-story__grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: clamp(1rem, 2vw, 2rem);
+  align-items: start;
+}
+.store-story__text { grid-column: 1 / 6; }
+.store-story__text .section-lead { margin-bottom: 1.6rem; }
+.store-story__text .feature-tags { margin-top: 1.8rem; }
+.store-story__photos {
+  grid-column: 7 / 13;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0;
+}
+.store-story__photo-main { grid-column: 1 / 6; grid-row: 1; z-index: 1; }
+.store-story__photo-sub1 {
+  grid-column: 4 / 7; grid-row: 1;
+  margin-top: 62%;
+  z-index: 2;
+  border: 6px solid var(--color-bg);   /* 白磁の縁で「浮き」を作る */
+  border-radius: var(--radius);
+}
+.section--alt .store-story__photo-sub1 { border-color: var(--color-bg-alt); }
+.store-story__photo-sub2 {
+  grid-column: 1 / 4; grid-row: 2;
+  margin-top: -12%;
+  z-index: 3;
+  border: 6px solid var(--color-bg);
+  border-radius: var(--radius);
+}
+@media (max-width: 1023px) {
+  .store-story__grid { grid-template-columns: 1fr; }
+  .store-story__text, .store-story__photos { grid-column: auto; }
+  .store-story__photos { margin-top: 1.6rem; }
+}
+
+/* ---------- 24-4. フォトギャラリー(不揃いbento) ---------- */
+.store-bento {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-auto-rows: clamp(96px, 13vw, 168px);
+  grid-auto-flow: dense;
+  gap: clamp(0.8rem, 1.5vw, 1.4rem);
+}
+.store-bento figure {
+  grid-column: span 2;
+  grid-row: span 2;
+  overflow: hidden;
+  border-radius: var(--radius);
+}
+/* 表示不具合修正 2026-07-03: 上の `.store-bento figure`(0,1,1)に負けて
+   span 指定が無効化されていたため figure を付けて特異性を揃える */
+.store-bento figure.store-bento__wide { grid-column: span 4; grid-row: span 3; }
+.store-bento figure.store-bento__tall { grid-row: span 3; }
+.store-bento figure.store-bento__half { grid-column: span 3; grid-row: span 2; }
+.store-bento img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 1.1s var(--ease);
+}
+.store-bento figure:hover img { transform: scale(1.03); }
+@media (max-width: 767px) {
+  .store-bento { grid-template-columns: 1fr 1fr; grid-auto-rows: clamp(110px, 26vw, 180px); }
+  .store-bento figure,
+  .store-bento figure.store-bento__half { grid-column: span 1; grid-row: span 2; }
+  .store-bento figure.store-bento__wide { grid-column: span 2; grid-row: span 2; }
+  .store-bento figure.store-bento__tall { grid-row: span 3; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .store-bento img { transition: none !important; }
+}
+
+/* ---------- 24-5. メニュー(sticky前書き+区分見出し付き料金表) ---------- */
+.menu-duo {
+  display: grid;
+  grid-template-columns: minmax(0, 0.42fr) minmax(0, 0.58fr);
+  gap: clamp(2rem, 4.5vw, 4.5rem);
+  align-items: start;
+}
+.menu-duo__aside { position: sticky; top: calc(var(--header-h) + 24px); }
+.menu-duo__aside .section-title { margin-bottom: 1.4rem; }
+.menu-duo__aside .price-table__notes { margin-top: 0; }
+@media (max-width: 1023px) {
+  .menu-duo { grid-template-columns: 1fr; }
+  .menu-duo__aside { position: static; }
+}
+.price-table__cat th {
+  padding: 2.4em 1em 0.7em;
+  font-family: var(--font-en);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+  border-bottom: 1px solid var(--color-gold);
+}
+.price-table tbody tr:first-child.price-table__cat th { padding-top: 0.4em; }
+
+/* ---------- 24-6. スタッフ: 統一900x1200(3:4)を活かす上書き ----------
+   店舗ページ(main[data-store])限定。color/ 等の他ページは 1:1 のまま */
+main[data-store] .staff-card__photo { aspect-ratio: 3 / 4; }
+main[data-store] .staff-ph { aspect-ratio: 3 / 4; }
+
+/* 竜王(公開スタッフ1名)用: 店長フィーチャー */
+.staff-feature {
+  display: grid;
+  grid-template-columns: minmax(0, 0.4fr) minmax(0, 0.6fr);
+  gap: clamp(1.6rem, 3.5vw, 3.5rem);
+  align-items: center;
+  border: 1px solid var(--color-line);
+  border-top: 2px solid var(--color-gold);
+  border-radius: var(--radius);
+  background: var(--color-bg);
+  padding: clamp(1.6rem, 3vw, 2.8rem);
+}
+.staff-feature__photos { position: relative; }
+.staff-feature__photo { overflow: hidden; border-radius: var(--radius); }
+.staff-feature__photo-sub {
+  position: absolute;
+  right: -8%; bottom: -10%;
+  width: 44%;
+  overflow: hidden;
+  border: 5px solid var(--color-bg);
+  border-radius: var(--radius);
+}
+.staff-feature__name {
+  font-family: var(--font-serif);
+  font-size: clamp(1.25rem, 1.1rem + 0.8vw, 1.625rem);
+  letter-spacing: 0.14em;
+  margin-bottom: 0.4rem;
+}
+.staff-feature__role {
+  font-size: 0.8125rem;
+  color: var(--color-gold);
+  letter-spacing: 0.12em;
+  margin-bottom: 1rem;
+}
+.staff-feature__desc { font-size: 0.9375rem; line-height: 2.1; color: rgba(43, 29, 16, 0.82); }
+@media (max-width: 767px) {
+  .staff-feature { grid-template-columns: 1fr; }
+  .staff-feature__photos { margin-bottom: 1.4rem; max-width: 320px; }
+}
+
+/* ---------- 24-7. お客様の声: 濃幕帯(帯写真+墨) ---------- */
+.voice-band {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.voice-band__bg { position: absolute; inset: 0; z-index: -2; }
+.voice-band__bg img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: 0.22;                      /* 写真は気配だけ残して墨に沈める */
+}
+.voice-band::before {
+  content: "";
+  position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(to top, rgba(36, 26, 16, 0.55), rgba(36, 26, 16, 0.2));
+}
+.voice-band .voice__quote { color: #f5f0e8; }
+.voice-band .voice__meta,
+.voice-band .voice__source { color: rgba(245, 240, 232, 0.6); }
+.voice-band .voice__score { color: rgba(245, 240, 232, 0.85); }
+.voice-band .voice__score strong { color: var(--color-gold); }
+.voice-band .divider-gold { background: rgba(168, 135, 79, 0.6); }
+
+/* ---------- 24-8. 店の個性(data-store別の最小差分) ---------- */
+/* 須玉: 郊外の静けさ=呼吸を深く(縦余白を全体+15%程度) */
+main[data-store="sudama"] { --space-section: clamp(5.2rem, 3.5rem + 7vw, 11.5rem); }
+/* 竜王: chichiの黒×大理石=スクリムをやや深く・英字ブランドを大きく */
+main[data-store="ryuo"] .store-hero__scrim {
+  background:
+    radial-gradient(ellipse 75% 60% at 22% 92%, rgba(36, 26, 16, 0.6) 0%, rgba(36, 26, 16, 0) 68%),
+    linear-gradient(to top, rgba(36, 26, 16, 0.68) 0%, rgba(36, 26, 16, 0.32) 46%, rgba(36, 26, 16, 0.14) 100%),
+    linear-gradient(rgba(36, 26, 16, 0.24), rgba(36, 26, 16, 0.24));
+}
+main[data-store="ryuo"] .store-hero__name-en {
+  font-size: clamp(1.05rem, 1rem + 0.5vw, 1.375rem);
+  text-transform: none;               /* 「chichi hair design」は小文字ブランド */
+  letter-spacing: 0.24em;
+}
+
+/* ---------- 24-9. 店舗ページの料金表(表示不具合修正 2026-07-03) ----------
+   店舗ページの料金表は「品目+価格」の2列のみ。共通 .price-table の
+   min-width:480px が SP(375px) で価格列を画面外へ押し出していたため、
+   店舗ページに限り min-width を解除し全幅にフィットさせる。
+   (menu/ 等の3列以上の料金表は従来どおり横スクロール) */
+main[data-store] .price-table { min-width: 0; width: 100%; }

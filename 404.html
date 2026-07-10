@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ページが見つかりません|True Trust(トゥルートラスト)</title>
+<meta name="description" content="お探しのページは見つかりませんでした。山梨・甲府の美容室 True Trust(トゥルートラスト)のトップページ、サロン一覧、ご予約ページへは下記リンクからお進みください。">
+<meta name="robots" content="noindex">
+<!-- 404はどの階層のURLでも配信されるため、このページのみ相対パスでなく
+     ルート相対パス(/assets/... /salon/ 等)を使用(相対パス規約の例外・理由明記) -->
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Noto+Sans+JP:wght@400;500;700&family=Shippori+Mincho+B1:wght@400;600&display=swap">
+<link rel="stylesheet" href="/assets/css/style.css">
+<script src="/assets/js/main.js" defer></script>
+<style>
+/* 404固有(規約: 20行以内) */
+.notfound{min-height: 46vh; display:flex; align-items:center;}
+.notfound__code{font-family:var(--font-en);font-size:clamp(4rem,3rem+6vw,7rem);line-height:1;color:var(--color-gold);letter-spacing:.12em}
+.notfound__links{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:2.2rem}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">本文へ移動</a>
+
+<!-- グローバルヘッダー(タブ削減版: 3項目+予約 REVISION_SPEC §B-1) -->
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="site-header__logo" href="/">
+      <!-- logo01-t.png=透過・高解像度版(760×808)。⚠️255KBのため公開前に縮小版(2x=160px幅程度)の生成を検討 -->
+      <img src="/assets/img/logo01-t.png" alt="True Trust(トゥルートラスト)山梨の美容室" width="80" height="85" loading="eager">
+    </a>
+    <nav class="site-header__nav" aria-label="グローバルナビゲーション">
+      <ul>
+        <li><a href="/salon/">サロン一覧</a></li>
+        <li><a href="/company/">私たちについて</a></li>
+        <li class="nav-recruit"><a href="/recruit/">RECRUIT</a></li>
+      </ul>
+    </nav>
+    <div class="site-header__cta">
+      <a class="btn btn--solid" href="/reservation/">ご予約</a>
+    </div>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="sp-menu" aria-label="メニューを開く">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<div class="sp-menu" id="sp-menu">
+  <nav class="sp-menu__nav" aria-label="メニュー">
+    <a href="/salon/">サロン一覧</a>
+    <a href="/company/">私たちについて</a>
+    <a href="/recruit/">採用情報</a>
+  </nav>
+  <p class="sp-menu__section">Salon</p>
+  <ul class="sp-menu__salons">
+    <li data-store="wado">
+      <a class="sp-menu__salon-link" href="/salon/wado/">和戸店<small>甲府市和戸町</small></a>
+      <a class="sp-menu__tel" href="tel:0552682705">055-268-2705</a>
+    </li>
+    <li data-store="shimoishida">
+      <a class="sp-menu__salon-link" href="/salon/shimoishida/">un 下石田店<small>甲府市下石田</small></a>
+      <a class="sp-menu__tel" href="tel:0552986699">055-298-6699</a>
+    </li>
+    <li data-store="sudama">
+      <a class="sp-menu__salon-link" href="/salon/sudama/">trois 須玉店<small>北杜市須玉町</small></a>
+      <a class="sp-menu__tel" href="tel:0551307979">0551-30-7979</a>
+    </li>
+    <li data-store="ryuo">
+      <a class="sp-menu__salon-link" href="/salon/ryuo/">chichi 竜王駅前店<small>甲斐市名取</small></a>
+      <a class="sp-menu__tel" href="tel:0552682211">055-268-2211</a>
+    </li>
+  </ul>
+  <div class="sp-menu__cta">
+    <a class="btn btn--solid" href="/reservation/">ご予約はこちら</a>
+  </div>
+</div>
+
+<main id="main">
+  <section class="section notfound" aria-labelledby="notfound-heading">
+    <div class="container container--narrow">
+      <p class="notfound__code" aria-hidden="true">404</p>
+      <p class="section-label">Not Found</p>
+      <h1 class="section-title" id="notfound-heading">お探しのページが見つかりませんでした</h1>
+      <p class="section-lead">URLが変更されたか、ページが移動・削除された可能性があります。お手数ですが、下記からお探しください。</p>
+      <div class="notfound__links">
+        <a class="btn btn--solid" href="/">ホームへ戻る</a>
+        <a class="btn btn--line" href="/salon/">サロン一覧</a>
+        <a class="btn btn--line" href="/menu/">メニュー・料金</a>
+        <a class="btn btn--line" href="/reservation/">ご予約</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="site-footer__grid">
+      <div class="site-footer__brand">
+        <!-- logo01-w.png=白文字版(濃幕#241a10用 REVISION_SPEC §B-3) -->
+        <img src="/assets/img/logo01-w.png" alt="True Trust(トゥルートラスト)" width="83" height="88" loading="lazy">
+        <p>美しさと健康を追求する、<br>あなたのための美容サロン</p>
+      </div>
+      <nav aria-label="店舗">
+        <p class="site-footer__heading">Salon</p>
+        <ul class="site-footer__list">
+          <li data-store="wado"><a href="/salon/wado/">True Trust 和戸店</a><span class="footer-salon-city">甲府市</span><a class="footer-salon-tel" href="tel:0552682705">055-268-2705</a></li>
+          <li data-store="shimoishida"><a href="/salon/shimoishida/">True Trust un 下石田店</a><span class="footer-salon-city">甲府市</span><a class="footer-salon-tel" href="tel:0552986699">055-298-6699</a></li>
+          <li data-store="sudama"><a href="/salon/sudama/">True Trust trois 須玉店</a><span class="footer-salon-city">北杜市</span><a class="footer-salon-tel" href="tel:0551307979">0551-30-7979</a></li>
+          <li data-store="ryuo"><a href="/salon/ryuo/">chichi hair design 竜王駅前店</a><span class="footer-salon-city">甲斐市</span><a class="footer-salon-tel" href="tel:0552682211">055-268-2211</a></li>
+        </ul>
+      </nav>
+      <nav aria-label="メニュー">
+        <p class="site-footer__heading">Menu</p>
+        <ul class="site-footer__list">
+          <li><a href="/menu/">メニュー・料金一覧</a></li>
+          <li><a href="/color/">カラー・白髪ぼかし</a></li>
+          <li><a href="/straightening/">縮毛矯正・髪質改善</a></li>
+          <li><a href="/headspa/">ヘッドスパ</a></li>
+          <li><a href="/mens/">HOMME(メンズ)</a></li>
+          <li><a href="/reservation/">ご予約</a></li>
+          <li><a href="/company/">会社概要</a></li>
+          <li><a href="/recruit/">採用情報</a></li>
+          <li><a href="/privacy/">プライバシーポリシー</a></li>
+        </ul>
+      </nav>
+      <nav aria-label="SNS・アプリ">
+        <p class="site-footer__heading">Follow</p>
+        <ul class="site-footer__list">
+          <li><a href="https://www.instagram.com/truetrust_wado/" target="_blank" rel="noopener">Instagram(和戸店)</a></li>
+          <li><a href="https://www.instagram.com/ohmori_truetrust/" target="_blank" rel="noopener">Instagram(un 下石田店)</a></li>
+          <li><a href="https://www.instagram.com/true_trust.sutama/" target="_blank" rel="noopener">Instagram(trois 須玉店)</a></li>
+          <li><a href="https://apps.apple.com/jp/app/id1475610845" target="_blank" rel="noopener">公式アプリ(iOS)</a></li>
+          <li><a href="https://play.google.com/store/apps/details?id=com.system_igp.mobius_c0211004" target="_blank" rel="noopener">公式アプリ(Android)</a></li>
+          <li><a href="https://apps.apple.com/jp/app/id1531269029" target="_blank" rel="noopener">chichi 専用アプリ(iOS)</a></li>
+          <li><a href="https://truetrust.salon.ec/?shop_id=e4457163a8dd786e38cdbce805636c48cccd24222d55a822504a07babfaaff27" target="_blank" rel="noopener">オンラインショップ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+  <p class="site-footer__bottom">© 合同会社PRESENCE 〒400-0812 山梨県甲府市和戸町809-1</p>
+</footer>
+
+<!-- 404にはsticky予約バーを置かない(迷子ページで予約導線を押し付けない) -->
+
+</body>
+</html>

@@ -1,0 +1,146 @@
+/* ============================================================
+   store.css — 直接着地CV型 店舗ページ追加レイヤー(STORE_CV_SPEC 2026-07-03)
+   対象: salon/{wado,shimoishida,sudama,ryuo} のみ。
+   読み込み: 各店 <head> で style.css の直後に
+     <link rel="stylesheet" href="../../assets/css/store.css">
+   ルール:
+   - style.css §24 は不変(このファイルが STORE_CV_SPEC の追加分すべてを持つ)
+   - 既存クラスの上書きは main[data-store] / .store-hero スコープに限定
+   - 既存トークンのみ使用(新トークン追加禁止)
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. 動画ヒーロー(TOP .hero-media と同挙動。STORE_CV_SPEC §6)
+      <img ポスター>=LCP。<video data-video-src> は main.js が
+      load 後に <source> を注入し、再生開始で .is-playing 付与。
+      ※.store-hero__media img は style.css §24-1 と同値の重複宣言
+        (video と重ね合わせるため absolute 化が必要。無害)
+   ------------------------------------------------------------ */
+.store-hero__media img,
+.store-hero__media video {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+.store-hero__media video { opacity: 0; transition: opacity 0.9s var(--ease); }
+.store-hero__media video.is-playing { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .store-hero__media video { transition: none !important; }
+}
+
+/* ------------------------------------------------------------
+   2. FV内「証明」1行(STORE_CV_SPEC §1-2)
+      HPB実測値のみ・リンク禁止・出典と時点を必ず併記
+   ------------------------------------------------------------ */
+.store-hero__proof {
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  color: rgba(250, 248, 244, 0.92);
+  margin-bottom: 1.4rem;
+}
+.store-hero__proof strong {
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  color: var(--color-gold);
+  text-shadow: none;
+  margin-inline: 0.15em;
+}
+.store-hero__proof span {
+  display: inline-block;
+  margin-left: 0.9em;
+  font-size: 0.6875rem;
+  opacity: 0.75;
+}
+
+/* ------------------------------------------------------------
+   3. 基本情報バー 5項目化(STORE_CV_SPEC §1-4)
+      営業時間/定休日/アクセス/席数/電話。
+      HPB_DATA.md に無い項目は dt ごと出さない(捏造禁止)
+   ------------------------------------------------------------ */
+main[data-store] .store-databar--float { grid-template-columns: repeat(5, auto); }
+@media (max-width: 1023px) {
+  main[data-store] .store-databar--float { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 599px) {
+  main[data-store] .store-databar--float { grid-template-columns: 1fr; }
+}
+
+/* ------------------------------------------------------------
+   4. 店内ナビ(STORE_CV_SPEC §2)
+      ミニヘッダー(fixed・--header-h)直下に吸着する
+      ページ内アンカーナビ。JS不要(カレント表示はしない)
+   ------------------------------------------------------------ */
+.store-nav {
+  position: sticky;
+  top: var(--header-h);
+  z-index: 60;                       /* header(z=100)より下・コンテンツより上 */
+  background: rgba(250, 248, 244, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--color-line);
+}
+.store-nav__inner {
+  width: min(100% - clamp(2.5rem, 8vw, 5rem), var(--container));
+  margin-inline: auto;
+  display: flex;
+  gap: clamp(1.2rem, 3vw, 2.4rem);
+  overflow-x: auto;                  /* SPは横スクロール */
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.store-nav__inner::-webkit-scrollbar { display: none; }
+.store-nav__inner a {
+  flex-shrink: 0;
+  padding: 0.9em 0.2em;
+  font-size: 0.8125rem;
+  letter-spacing: 0.12em;
+  color: var(--color-brand-soft);
+  border-bottom: 2px solid transparent;
+  transition: color 0.3s, border-color 0.3s;
+}
+.store-nav__inner a:hover,
+.store-nav__inner a:focus-visible { color: var(--color-brand); border-color: var(--color-gold); }
+.store-nav__reserve { color: var(--color-gold) !important; font-weight: 700; margin-left: auto; }
+
+/* アンカー着地位置: ヘッダー+ナビぶん逃がす(scroll-padding-top は共通値のため触らない) */
+main[data-store] section[id] { scroll-margin-top: calc(var(--header-h) + 52px); }
+
+/* ------------------------------------------------------------
+   5. CTA帯(STORE_CV_SPEC §5)
+      メニューsection直後/Voice section直後に挟む全幅CV帯。
+      飛び先は #reserve + tel: のみ(HPB禁止)。data-store 必須
+   ------------------------------------------------------------ */
+.store-cta-strip {
+  border-block: 1px solid var(--color-line);
+  background: var(--color-bg-alt);
+  padding: clamp(1.6rem, 3.5vw, 2.6rem) clamp(1.3rem, 4vw, 2.4rem);
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+  gap: 1rem 2.2rem; text-align: center;
+}
+.store-cta-strip__lead {
+  font-family: var(--font-serif);
+  font-size: 1.0625rem;
+  letter-spacing: 0.14em;
+}
+.store-cta-strip__actions { display: flex; flex-wrap: wrap; gap: 0.8rem; justify-content: center; }
+@media (max-width: 599px) {
+  .store-cta-strip__actions { width: 100%; }
+  .store-cta-strip .btn { flex: 1 1 100%; }
+}
+
+/* 濃幕バリアント(隣接セクションと白磁が並ぶ場合のみ。Voice直後用に許可) */
+.store-cta-strip--deep {
+  background: var(--color-brand);
+  border-block-color: rgba(250, 248, 244, 0.18);
+  color: #faf8f4;
+}
+.store-cta-strip--deep .btn--solid { background: var(--color-bg); color: var(--color-brand); }
+.store-cta-strip--deep .btn--solid:hover,
+.store-cta-strip--deep .btn--solid:focus-visible {
+  background: #fff;
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 1px var(--color-gold);
+}
+.store-cta-strip--deep .btn--line { color: #faf8f4; border-color: rgba(250, 248, 244, 0.65); }
+.store-cta-strip--deep .btn--line:hover,
+.store-cta-strip--deep .btn--line:focus-visible { border-color: var(--color-gold); color: #fff; }
